@@ -5,11 +5,11 @@ import bodyParser from 'body-parser';
 import log from 'morgan';
 import fetch from 'node-fetch';
 // import OAuth2Server from 'express-oauth-server';
-import mongoose from 'mongoose';
+// import mongoose from 'mongoose';
 import config from './config';
 // import model from './oauthModel';
 
-const mongouri = config.databaseinfo.mongodbUri;
+// const mongouri = config.databaseinfo.mongodbUri;
 const app = express();
 // mongoose.connect(config.databaseinfo.mongodbUri, (err, res) => {
 //   if (err) {
