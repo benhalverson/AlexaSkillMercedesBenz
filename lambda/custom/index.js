@@ -36,6 +36,12 @@ function processLaunchRequest(event, res) {
   res.send(output);
 }
 
+/**
+ * event is an object that has amazon data
+ * res is the response object from any api's
+ * @param {object} event
+ * @param {object} res
+ */
 function processGetTraffic(event, res) {
   if (event.request.dialogState === 'STARTED' || event.request.dialogState === 'IN_PROGRESS') {
     const response = {
@@ -51,11 +57,11 @@ function processGetTraffic(event, res) {
     const output = generateFinalOutput(response, sessionAttributes);
     res.send(output);
   } else if (event.request.dialogState === 'COMPLETED') {
-    // const fromCity = event.request.intent.slots.fromCity.value;
-    // const toCity = event.request.intent.slots.toCity.value;
+    const fromCity = event.request.intent.slots.fromCity.value;
+    const toCity = event.request.intent.slots.toCity.value;
     const pricing = event.request.intent.slots.pricing.value;
 
-    const speech = `The price is ${pricing} `;
+    const speech = `testing ${fromCity}, ${toCity}, ${pricing}`;
     const sessionAttributes = {};
     const response = generateSpeechResponse(speech, true);
     const output = generateFinalOutput(response, sessionAttributes);
@@ -63,13 +69,7 @@ function processGetTraffic(event, res) {
   }
 }
 
-// function processGetParts(event, res) {
-//   const options = {
-//     method: 'POST',
-//     body: data,
-//   };
 
-// getData.httpGet();
 fetch('https://api.mercedes-benz.com/configurator/v1/markets/de_DE/models?bodyId=16&apikey=768e43c0-132a-489f-af85-dde91ba09822')
   .then(res => res.json())
   .then((data) => {
@@ -78,6 +78,10 @@ fetch('https://api.mercedes-benz.com/configurator/v1/markets/de_DE/models?bodyId
   .catch(err => console.error(err));
 
 
+/**
+ * Required for Amazon echo to stop alexa from speaking
+ * @param {object} res
+ */
 function processStopIntent(res) {
   const speechText = 'Goodbye';
   const response = generateSpeechResponse(speechText, true);
@@ -86,7 +90,10 @@ function processStopIntent(res) {
   res.send(output);
 }
 
-
+/**
+ * Required for Amazon echo to help the user on what the skill can do
+ * @param {object} res
+ */
 function processHelpIntent(res) {
   const speechText = 'Hello.. you can say things like. How much is an AMG';
   const response = generateSpeechResponse(speechText, false);
@@ -102,6 +109,7 @@ function sessionEndRequest(event, res) {
   const output = generateFinalOutput(response, sessionAttributes);
   res.send(output);
 }
+
 
 function processGetParts(event, res) {
   console.log(event);
