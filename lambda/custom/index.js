@@ -1,7 +1,8 @@
 /* eslint-disable  func-names */
 /* eslint-disable  no-console */
 /* eslint-disable  default-case */
-import * as getData from './api';
+// import * as getData from './api';
+import fetch from 'node-fetch';
 /**
  * A function that takes the text from the user and responses to the user.
  * @param {object} speech
@@ -68,14 +69,14 @@ function processGetTraffic(event, res) {
 //     body: data,
 //   };
 
-  getData.httpGet();
-  // fetch(options, 'https://api.mercedes-benz.com/configurator/v1/markets/de_DE/models?bodyId=16&apikey=768e43c0-132a-489f-af85-dde91ba09822')
-  //   .then(res => res.json())
-  //   .then((data) => {
-  //     console.log(data[0].vehicleClass);
-  //   })
-  //   .catch(err => console.error(err));
-}
+// getData.httpGet();
+fetch('https://api.mercedes-benz.com/configurator/v1/markets/de_DE/models?bodyId=16&apikey=768e43c0-132a-489f-af85-dde91ba09822')
+  .then(res => res.json())
+  .then((data) => {
+    console.log(data[0].vehicleClass);
+  })
+  .catch(err => console.error(err));
+
 
 function processStopIntent(res) {
   const speechText = 'Goodbye';
@@ -102,6 +103,11 @@ function sessionEndRequest(event, res) {
   res.send(output);
 }
 
+function processGetParts(event, res) {
+  console.log(event);
+  console.log(res);
+}
+
 function intentRequest(event, res) {
   switch (event.request.intent.name) {
     case 'AMAZON.FallbackIntent':
@@ -122,7 +128,7 @@ function intentRequest(event, res) {
       break;
   }
 }
-export default (req, res) => {
+module.exports = function processLaunch(req, res) {
   const event = req.body;
 
   switch (event.request.type) {
