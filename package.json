@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js --exec babel-node"
+    "dev": "nodemon index.js --exec babel-node",
+    "test": "mocha"
   },
   "keywords": [],
   "author": "Ben Halverson <benhalverson33@gmail.com> (http://benhalverson.me/)",
@@ -23,9 +24,11 @@
   "devDependencies": {
     "babel-cli": "6.26.0",
     "babel-preset-env": "1.7.0",
+    "chai": "4.1.2",
     "eslint": "4.19.1",
     "eslint-config-airbnb-base": "13.0.0",
     "eslint-plugin-import": "2.13.0",
+    "mocha": "5.2.0",
     "nodemon": "1.17.5"
   }
 }
