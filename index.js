@@ -47,5 +47,5 @@ app.get('/dealers', (req, res) => {
 });
 
 app.listen(config.port, () => {
-  console.log(`listing on, ${config.serverUrl}`);
+  console.log(`listening on, ${config.serverUrl}`);
 });
