@@ -1,7 +1,7 @@
 /* eslint-disable  func-names */
 /* eslint-disable  no-console */
 /* eslint-disable  default-case */
-import fetch from 'node-fetch';
+import * as getData from './api';
 /**
  * A function that takes the text from the user and responses to the user.
  * @param {object} speech
@@ -58,20 +58,23 @@ function processGetTraffic(event, res) {
     const sessionAttributes = {};
     const response = generateSpeechResponse(speech, true);
     const output = generateFinalOutput(response, sessionAttributes);
+    res.send(output);
   }
 }
 
-function processGetParts(event, res) {
-  const options = {
-    method: 'POST',
-    body: data,
-  };
-  fetch(options, 'https://api.mercedes-benz.com/configurator/v1/markets/de_DE/models?bodyId=16&apikey=768e43c0-132a-489f-af85-dde91ba09822')
-    .then(res => res.json())
-    .then((data) => {
-      console.log(data[0].vehicleClass);
-    })
-    .catch(err => console.error(err));
+// function processGetParts(event, res) {
+//   const options = {
+//     method: 'POST',
+//     body: data,
+//   };
+
+  getData.httpGet();
+  // fetch(options, 'https://api.mercedes-benz.com/configurator/v1/markets/de_DE/models?bodyId=16&apikey=768e43c0-132a-489f-af85-dde91ba09822')
+  //   .then(res => res.json())
+  //   .then((data) => {
+  //     console.log(data[0].vehicleClass);
+  //   })
+  //   .catch(err => console.error(err));
 }
 
 function processStopIntent(res) {
@@ -91,6 +94,14 @@ function processHelpIntent(res) {
   res.send(output);
 }
 
+function sessionEndRequest(event, res) {
+  const speechText = 'Thanks for trying out the Mercedes skill';
+  const response = generateSpeechResponse(speechText, true);
+  const sessionAttributes = {};
+  const output = generateFinalOutput(response, sessionAttributes);
+  res.send(output);
+}
+
 function intentRequest(event, res) {
   switch (event.request.intent.name) {
     case 'AMAZON.FallbackIntent':
@@ -98,6 +109,7 @@ function intentRequest(event, res) {
     case 'AMAZON.CancelIntent':
       break;
     case 'AMAZON.HelpIntent':
+      processHelpIntent(res);
       break;
     case 'AMAZON.StopIntent':
       processStopIntent(res);
@@ -110,7 +122,7 @@ function intentRequest(event, res) {
       break;
   }
 }
-export const processLaunch = (req, res) => {
+export default (req, res) => {
   const event = req.body;
 
   switch (event.request.type) {
