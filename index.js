@@ -26,7 +26,6 @@ app.post('/pricing', (req, res) => {
 
   // };
   skills.processLaunch(req, res);
-  console.log(req.body);
   // fetch('https://api.mercedes-benz.com/configurator/v1/markets/de_DE/models?bodyId=16&apikey=768e43c0-132a-489f-af85-dde91ba09822')
   //   .then(res => res.json())
   //   .then((response) => {
