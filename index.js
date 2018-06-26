@@ -1,8 +1,11 @@
+/* eslint-disable  no-console */
+
 import express from 'express';
 import bodyParser from 'body-parser';
 import log from 'morgan';
 import fetch from 'node-fetch';
 import config from './config';
+import * as skills from './lambda/custom/index';
 
 const app = express();
 
@@ -18,15 +21,20 @@ app.get('/config', (req, res) => {
     .catch(err => console.log(err));
 });
 
-app.get('/pricing', (req, res) => {
-  fetch('https://api.mercedes-benz.com/configurator/v1/markets/de_DE/models?bodyId=16&apikey=768e43c0-132a-489f-af85-dde91ba09822')
-    .then(res => res.json())
-    .then((response) => {
-      console.log(response[0]);
-      console.log(response[0].vehicleClass);
-      res.send('ok');
-    })
-    .catch(err => console.error(err));
+app.post('/pricing', (req, res) => {
+  // const options = {
+
+  // };
+  skills.processLaunch(req, res);
+  console.log(req.body);
+  // fetch('https://api.mercedes-benz.com/configurator/v1/markets/de_DE/models?bodyId=16&apikey=768e43c0-132a-489f-af85-dde91ba09822')
+  //   .then(res => res.json())
+  //   .then((response) => {
+  //     console.log(response[0]);
+  //     console.log(response[0].vehicleClass);
+  //     res.send('ok');
+  //   })
+  //   .catch(err => console.error(err));
 });
 
 app.get('/dealers', (req, res) => {
