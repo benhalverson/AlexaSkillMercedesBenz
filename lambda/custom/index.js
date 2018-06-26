@@ -1,119 +1,95 @@
 /* eslint-disable  func-names */
 /* eslint-disable  no-console */
+/* eslint-disable  default-case */
 
-import Alexa from 'ask-sdk-core';
-import fetch from 'node-fetch';
-import config from '../../config';
+/**
+ * A function that takes the text from the user and responses to the user.
+ * @param {object} speech
+ * @param {object} shouldEndSession
+ */
+function generateSpeechResponse(speech, shouldEndSession) {
+  return {
+    outputSpeech: {
+      type: 'PlainText',
+      text: speech,
+    },
+    shouldEndSession,
+  };
+}
 
 
-const GetDataHandler = {
-  handleData() {
-    fetch(`https://api.mercedes-benz.com/configurator/v1/markets/de_DE/models?bodyId=16&apikey=${config.API_KEY}`)
-      .then(res => res.json())
-      .then((response) => {
-        console.log(response[0]);
-        console.log(response[0].vehicleClass);
-      })
-      .catch(err => console.error(err));
-  },
+function generateFinalOutput(response, sessionAttributes) {
+  return {
+    version: '1.0',
+    sessionAttributes,
+    response,
+  };
+}
+
+function processLaunchRequest(event, res) {
+  const greeting = 'Hello. You can say Help me find pricing or get traffic information';
+  const response = generateSpeechResponse(greeting, false);
+  const sessionAttributes = {};
+  const output = generateFinalOutput(response, sessionAttributes);
+  res.send(output);
+  console.log(output);
+}
+
+function processGetTraffic(event, res) {
+  if (event.request.dialogState === 'STARTED' || event.request.dialogState === 'IN_PROGRESS') {
+    const response = {
+      outputSpeech: null,
+      card: null,
+      directives: [{
+        type: 'Dialog.Delegate',
+      }],
+      reprompt: null,
+      shouldEndSession: false,
+    };
+    const sessionAttributes = {};
+    const output = generateFinalOutput(response, sessionAttributes);
+    res.send(output);
+  } else if (event.request.dialogState === 'COMPLETED') {
+    const fromCity = event.request.intent.slots.fromCity.value;
+    const toCity = event.request.intent.slots.toCity.value;
+    const pricing = event.request.intent.slots.pricing.value;
+
+    const speech = `The price is ${pricing} `;
+    const sessionAttributes = {};
+    const response = generateSpeechResponse(speech, true);
+    const output = generateFinalOutput(response, sessionAttributes);
+  }
+}
+
+function intentRequest(event, res) {
+  switch (event.request.intent.name) {
+    case 'AMAZON.FallbackIntent':
+      break;
+    case 'AMAZON.CancelIntent':
+      break;
+    case 'AMAZON.HelpIntent':
+      break;
+    case 'AMAZON.StopIntent':
+      break;
+    case 'parts':
+      break;
+    case 'getTraffic':
+      processGetTraffic(event, res);
+      break;
+  }
+}
+export const processLaunch = (req, res) => {
+  const event = req.body;
+
+  switch (event.request.type) {
+    case 'LaunchRequest':
+      processLaunchRequest(event, res);
+      break;
+    case 'IntentRequest':
+      intentRequest(event, res);
+      break;
+    case 'SessionEndRequest':
+      sessionEndRequest(event, res);
+      break;
+  }
 };
-const LaunchRequestHandler = {
-  canHandle(handlerInput) {
-    return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
-  },
-  handle(handlerInput) {
-    const speechText = 'Welcome to the Alexa Skills Kit, you can say hello!';
-
-    return handlerInput.responseBuilder
-      .speak(speechText)
-      .reprompt(speechText)
-      .withSimpleCard('Hello World', speechText)
-      .getResponse();
-  },
-};
-
-const HelloWorldIntentHandler = {
-  canHandle(handlerInput) {
-    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-      && handlerInput.requestEnvelope.request.intent.name === 'HelloWorldIntent';
-  },
-  handle(handlerInput) {
-    const speechText = 'Hello World!';
-
-    return handlerInput.responseBuilder
-      .speak(speechText)
-      .withSimpleCard('Hello World', speechText)
-      .getResponse();
-  },
-};
-
-const HelpIntentHandler = {
-  canHandle(handlerInput) {
-    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-      && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent';
-  },
-  handle(handlerInput) {
-    const speechText = 'You can say hello to me!';
-
-    return handlerInput.responseBuilder
-      .speak(speechText)
-      .reprompt(speechText)
-      .withSimpleCard('Hello World', speechText)
-      .getResponse();
-  },
-};
-
-const CancelAndStopIntentHandler = {
-  canHandle(handlerInput) {
-    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-      && (handlerInput.requestEnvelope.request.intent.name === 'AMAZON.CancelIntent'
-        || handlerInput.requestEnvelope.request.intent.name === 'AMAZON.StopIntent');
-  },
-  handle(handlerInput) {
-    const speechText = 'Goodbye!';
-
-    return handlerInput.responseBuilder
-      .speak(speechText)
-      .withSimpleCard('Hello World', speechText)
-      .getResponse();
-  },
-};
-
-const SessionEndedRequestHandler = {
-  canHandle(handlerInput) {
-    return handlerInput.requestEnvelope.request.type === 'SessionEndedRequest';
-  },
-  handle(handlerInput) {
-    console.log(`Session ended with reason: ${handlerInput.requestEnvelope.request.reason}`);
-
-    return handlerInput.responseBuilder.getResponse();
-  },
-};
-
-const ErrorHandler = {
-  canHandle() {
-    return true;
-  },
-  handle(handlerInput, error) {
-    console.log(`Error handled: ${error.message}`);
-
-    return handlerInput.responseBuilder
-      .speak('Sorry, I can\'t understand the command. Please say again.')
-      .reprompt('Sorry, I can\'t understand the command. Please say again.')
-      .getResponse();
-  },
-};
-
-const skillBuilder = Alexa.SkillBuilders.custom();
-
-exports.handler = skillBuilder
-  .addRequestHandlers(
-    LaunchRequestHandler,
-    HelloWorldIntentHandler,
-    HelpIntentHandler,
-    CancelAndStopIntentHandler,
-    SessionEndedRequestHandler,
-    GetDataHandler,
-  )
-  .addErrorHandlers(ErrorHandler)
-  .lambda();
