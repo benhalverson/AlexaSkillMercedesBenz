@@ -1,8 +1,22 @@
 /* eslint-disable  func-names */
 /* eslint-disable  no-console */
 
-const Alexa = require('ask-sdk-core');
+import Alexa from 'ask-sdk-core';
+import fetch from 'node-fetch';
+import config from '../../config';
 
+
+const GetDataHandler = {
+  handleData() {
+    fetch(`https://api.mercedes-benz.com/configurator/v1/markets/de_DE/models?bodyId=16&apikey=${config.API_KEY}`)
+      .then(res => res.json())
+      .then((response) => {
+        console.log(response[0]);
+        console.log(response[0].vehicleClass);
+      })
+      .catch(err => console.error(err));
+  },
+};
 const LaunchRequestHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
@@ -99,6 +113,7 @@ exports.handler = skillBuilder
     HelpIntentHandler,
     CancelAndStopIntentHandler,
     SessionEndedRequestHandler,
+    GetDataHandler,
   )
   .addErrorHandlers(ErrorHandler)
   .lambda();
