@@ -128,7 +128,7 @@ function intentRequest(event, res) {
       break;
   }
 }
-export default (req, res) => {
+module.exports = function processLaunch(req, res) {
   const event = req.body;
 
   switch (event.request.type) {

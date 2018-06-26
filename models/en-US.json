@@ -1,45 +1,60 @@
 {
   "interactionModel": {
-  "languageModel": {
-  "invocationName": "hey-mercedes",
-  "intents": [
-  {
-  "name": "AMAZON.CancelIntent",
-  "samples": []
-  },
-  {
-  "name": "AMAZON.HelpIntent",
-  "samples": []
-  },
-  {
-  "name": "AMAZON.StopIntent",
-  "samples": []
-  },
-  {
-  "name": "AMAZON.FallbackIntent",
-  "samples": []
-  },
-  {
-  "name": "GetNewFactIntent",
-  "samples": [
-  "a fact",
-  "a space fact",
-  "tell me a fact",
-  "tell me a space fact",
-  "give me a fact",
-  "give me a space fact",
-  "tell me trivia",
-  "tell me a space trivia",
-  "give me trivia",
-  "give me a space trivia",
-  "give me some information",
-  "give me some space information",
-  "tell me something",
-  "give me something"
-  ],
-  "slots": []
+      "languageModel": {
+          "invocationName": "mercedes",
+          "intents": [
+              {
+                  "name": "AMAZON.FallbackIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.CancelIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.HelpIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.StopIntent",
+                  "samples": []
+              },
+              {
+                  "name": "parts",
+                  "slots": [
+                      {
+                          "name": "value",
+                          "type": "AMAZON.EventType"
+                      }
+                  ],
+                  "samples": [
+                      "how much do new {value} cost"
+                  ]
+              },
+              {
+                  "name": "getTraffic",
+                  "slots": [
+                      {
+                          "name": "traffic",
+                          "type": "AMAZON.EventType"
+                      },
+                      {
+                          "name": "home",
+                          "type": "AMAZON.US_CITY"
+                      },
+                      {
+                          "name": "work",
+                          "type": "AMAZON.US_CITY"
+                      }
+                  ],
+                  "samples": [
+                      "{traffic} going {home}",
+                      "{traffic} going to {work}",
+                      "whats the {traffic} like right now headed to {work}"
+                  ]
+              }
+          ],
+          "types": []
+      }
   }
-  ]
-  }
-  }
-  }
+}
