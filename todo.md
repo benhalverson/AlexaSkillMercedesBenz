@@ -9,3 +9,9 @@
 [ ] connect to alexa skill
 
 [ ] ...
+
+https://www.youtube.com/watch?v=QxgdPI1B7rg
+
+https://www.youtube.com/watch?v=_6EMnNnZEMs
+
+https://www.youtube.com/watch?v=IsFUdJQVxLs
