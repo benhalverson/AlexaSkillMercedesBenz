@@ -1,7 +1,7 @@
 /* eslint-disable  func-names */
 /* eslint-disable  no-console */
 /* eslint-disable  default-case */
-
+import fetch from 'node-fetch';
 /**
  * A function that takes the text from the user and responses to the user.
  * @param {object} speech
@@ -27,12 +27,12 @@ function generateFinalOutput(response, sessionAttributes) {
 }
 
 function processLaunchRequest(event, res) {
-  const greeting = 'Hello. You can say Help me find pricing or get traffic information';
+  // const greeting = 'Hello. You can say Help me find pricing or get traffic information';
+  const greeting = 'Hello from the api data ';
   const response = generateSpeechResponse(greeting, false);
   const sessionAttributes = {};
   const output = generateFinalOutput(response, sessionAttributes);
   res.send(output);
-  console.log(output);
 }
 
 function processGetTraffic(event, res) {
@@ -50,8 +50,8 @@ function processGetTraffic(event, res) {
     const output = generateFinalOutput(response, sessionAttributes);
     res.send(output);
   } else if (event.request.dialogState === 'COMPLETED') {
-    const fromCity = event.request.intent.slots.fromCity.value;
-    const toCity = event.request.intent.slots.toCity.value;
+    // const fromCity = event.request.intent.slots.fromCity.value;
+    // const toCity = event.request.intent.slots.toCity.value;
     const pricing = event.request.intent.slots.pricing.value;
 
     const speech = `The price is ${pricing} `;
@@ -59,6 +59,36 @@ function processGetTraffic(event, res) {
     const response = generateSpeechResponse(speech, true);
     const output = generateFinalOutput(response, sessionAttributes);
   }
+}
+
+function processGetParts(event, res) {
+  const options = {
+    method: 'POST',
+    body: data,
+  };
+  fetch(options, 'https://api.mercedes-benz.com/configurator/v1/markets/de_DE/models?bodyId=16&apikey=768e43c0-132a-489f-af85-dde91ba09822')
+    .then(res => res.json())
+    .then((data) => {
+      console.log(data[0].vehicleClass);
+    })
+    .catch(err => console.error(err));
+}
+
+function processStopIntent(res) {
+  const speechText = 'Goodbye';
+  const response = generateSpeechResponse(speechText, true);
+  const sessionAttributes = {};
+  const output = generateFinalOutput(response, sessionAttributes);
+  res.send(output);
+}
+
+
+function processHelpIntent(res) {
+  const speechText = 'Hello.. you can say things like. How much is an AMG';
+  const response = generateSpeechResponse(speechText, false);
+  const sessionAttributes = {};
+  const output = generateFinalOutput(response, sessionAttributes);
+  res.send(output);
 }
 
 function intentRequest(event, res) {
@@ -70,8 +100,10 @@ function intentRequest(event, res) {
     case 'AMAZON.HelpIntent':
       break;
     case 'AMAZON.StopIntent':
+      processStopIntent(res);
       break;
     case 'parts':
+      processGetParts(event, res);
       break;
     case 'getTraffic':
       processGetTraffic(event, res);
